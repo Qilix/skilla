@@ -6,6 +6,7 @@ use App\Http\Actions\TokenActions;
 use App\Http\DTOs\User\CreateUserDTO;
 use App\Http\DTOs\User\LoginUserDTO;
 use App\Http\Repositories\UserRepository;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -22,7 +23,7 @@ class AuthService
     /*
      * Регистрация менеджера с выдачей персонального токена
      */
-    public function register(CreateUserDTO $dto)
+    public function register(CreateUserDTO $dto): array
     {
         $user = $this->userRepository->create([
             'name' => $dto->name,
@@ -43,7 +44,7 @@ class AuthService
     /*
      * Авторизация менеджера с выдачей токена
      */
-    public function login(LoginUserDTO $dto)
+    public function login(LoginUserDTO $dto): array
     {
         if (!Auth::attempt(['email' => $dto->email, 'password' => $dto->password])) {
             throw ValidationException::withMessages([
@@ -60,5 +61,15 @@ class AuthService
             'expires_at' => $tokenData->token->expires_at->toDateTimeString(),
             'user' => $user
         ];
+    }
+
+    public function logout(User $user): void
+    {
+        TokenActions::RevokeToken($user);
+    }
+
+    public function activeSessions(User $user): object
+    {
+        return $this->userRepository->getActiveSessions($user);
     }
 }

@@ -8,6 +8,7 @@ use App\Http\DTOs\User\LoginUserDTO;
 use App\Http\Requests\AuthRequests\CreateAuthRequest;
 use App\Http\Requests\AuthRequests\LoginAuthRequest;
 use App\Http\Services\AuthService;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -45,5 +46,20 @@ class AuthController extends Controller
         }
 
         return response(['msg' => 'Success login', 'token' => $token]);
+    }
+
+    public function logout(Request $request)
+    {
+        try{
+            $this->service->logout($request->user());
+        }catch(AuthException $e){
+            return response(['error' => $e->getMessage()], 500);
+        }
+
+        return response(['msg' => 'Success logout']);
+    }
+    public function sessions(Request $request)
+    {
+        return $this->service->activeSessions($request->user());
     }
 }
