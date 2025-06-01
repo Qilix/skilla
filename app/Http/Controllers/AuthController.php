@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\AuthException;
-use App\Http\DTOs\CreateUserDTO;
-use App\Http\Requests\CreateAuthRequest;
+use App\Http\DTOs\User\CreateUserDTO;
+use App\Http\DTOs\User\LoginUserDTO;
+use App\Http\Requests\AuthRequests\CreateAuthRequest;
+use App\Http\Requests\AuthRequests\LoginAuthRequest;
 use App\Http\Services\AuthService;
 
 class AuthController extends Controller
@@ -28,5 +30,20 @@ class AuthController extends Controller
         }
 
         return response(['msg' => 'Success register', 'token' => $token]);
+    }
+
+    /*
+     * Авторизация менеджера
+     */
+    public function login(LoginAuthRequest $request)
+    {
+        $dto = LoginUserDTO::fromRequest($request);
+        try{
+            $token = $this->service->login($dto);
+        }catch(AuthException $e){
+            return response(['error' => $e->getMessage()], 500);
+        }
+
+        return response(['msg' => 'Success login', 'token' => $token]);
     }
 }

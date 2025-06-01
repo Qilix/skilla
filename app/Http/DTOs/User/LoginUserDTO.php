@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Http\DTOs;
+namespace App\Http\DTOs\User;
 
-use App\Http\Requests\CreateAuthRequest;
+use App\Http\Requests\AuthRequests\LoginAuthRequest;
 
-class CreateUserDTO
+class LoginUserDTO
 {
-    public string $name;
     public string $email;
     public string $password;
 
-    public static function fromRequest(CreateAuthRequest $request): self
+    public static function fromRequest(LoginAuthRequest $request): self
     {
         $dto = new self();
-        $dto->name = $request->input('name');
         $dto->email = $request->input('email');
         $dto->password = $request->input('password');
 
