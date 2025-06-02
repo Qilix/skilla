@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
@@ -41,4 +42,8 @@ Route::prefix('passport')->group(function () {
         Route::post('', [PersonalAccessTokenController::class, 'store']);
         Route::delete('{token_id}', [PersonalAccessTokenController::class, 'destroy']);
     });
+});
+
+Route::prefix('order')->group(function () {
+    Route::middleware('auth:api')->post('', [OrderController::class, 'store']);
 });
