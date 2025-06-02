@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
@@ -47,4 +48,8 @@ Route::prefix('passport')->group(function () {
 Route::prefix('order')->group(function () {
     Route::middleware('auth:api')->post('', [OrderController::class, 'store']);
     Route::middleware('auth:api')->post('/{order_id}/assign', [OrderController::class, 'assignWorker']);
+});
+
+Route::prefix('worker')->group(function () {
+    Route::middleware('auth:api')->get('', [WorkerController::class, 'getFilteredByOrderType']);
 });
