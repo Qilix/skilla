@@ -46,4 +46,5 @@ Route::prefix('passport')->group(function () {
 
 Route::prefix('order')->group(function () {
     Route::middleware('auth:api')->post('', [OrderController::class, 'store']);
+    Route::middleware('auth:api')->post('/{order_id}/assign', [OrderController::class, 'assignWorker']);
 });

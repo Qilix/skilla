@@ -2,17 +2,25 @@
 
 namespace App\Http\Services;
 
+use App\Http\DTOs\Order\AssignWorkerDTO;
 use App\Http\DTOs\Order\CreateOrderDTO;
+use App\Http\Enums\OrderStatus;
 use App\Http\Repositories\OrderRepository;
+use App\Http\Repositories\OrderWorkerRepostiory;
+use App\Http\Repositories\WorkersExOrderTypeRepository;
 use App\Models\Order;
 
 class OrderService
 {
     private OrderRepository $orderRepository;
+    private OrderWorkerRepostiory $orderWorkerRepostiory;
+    private WorkersExOrderTypeRepository $workersExOrderTypeRepository;
 
-    public function __construct(OrderRepository $orderRepository)
+    public function __construct(OrderRepository $orderRepository, OrderWorkerRepostiory $orderWorkerRepostiory, WorkersExOrderTypeRepository $workersExOrderTypeRepository)
     {
         $this->orderRepository = $orderRepository;
+        $this->orderWorkerRepostiory = $orderWorkerRepostiory;
+        $this->workersExOrderTypeRepository = $workersExOrderTypeRepository;
     }
 
     public function create(CreateOrderDTO $dto): Order
@@ -27,5 +35,30 @@ class OrderService
             'amount' => $dto->amount,
             'status' => $dto->status,
         ]);
+    }
+
+    public function setStatus(int $orderId, OrderStatus $status)
+    {
+        return $this->orderRepository->update($orderId, ['status' => $status]);
+    }
+    public function assignWorker(AssignWorkerDTO $dto, int $orderId): array
+    {
+        $rejected = $this->workersExOrderTypeRepository->rejected($dto->workerId, $dto->orderTypeId);
+
+        if (empty($rejected)) {
+            $this->orderWorkerRepostiory->create([
+                'worker_id' => $dto->workerId,
+                'order_id' => $orderId
+            ]);
+
+            /*
+             * Задать статус "назначен исполнитель" для заказа
+             */
+            $this->setStatus($orderId, OrderStatus::ASSIGNED);
+        } else {
+            return ['msg' => "Worker can't take this type of order"];
+        }
+
+        return ['msg' => 'Success assign'];
     }
 }
