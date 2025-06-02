@@ -9,5 +9,6 @@ class OrderType extends Model
 {
     use SoftDeletes;
 
+    public $timestamps = false;
     protected $dates = ['deleted_at'];
 }
