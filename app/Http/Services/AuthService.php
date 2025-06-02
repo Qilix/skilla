@@ -63,11 +63,17 @@ class AuthService
         ];
     }
 
+    /*
+     * Выйти из системы
+     */
     public function logout(User $user): void
     {
         TokenActions::RevokeToken($user);
     }
 
+    /*
+     * Получить все активные сессии
+     */
     public function activeSessions(User $user): object
     {
         return $this->userRepository->getActiveSessions($user);

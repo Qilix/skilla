@@ -48,6 +48,9 @@ class AuthController extends Controller
         return response(['msg' => 'Success login', 'token' => $token]);
     }
 
+    /*
+     * Выход из системы
+     */
     public function logout(Request $request)
     {
         try{
@@ -58,6 +61,10 @@ class AuthController extends Controller
 
         return response(['msg' => 'Success logout']);
     }
+
+    /*
+     * Просмотр всех активных сессий пользователя
+     */
     public function sessions(Request $request)
     {
         return $this->service->activeSessions($request->user());

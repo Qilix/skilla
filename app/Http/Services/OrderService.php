@@ -23,6 +23,9 @@ class OrderService
         $this->workersExOrderTypeRepository = $workersExOrderTypeRepository;
     }
 
+    /*
+     * Создать заказ
+     */
     public function create(CreateOrderDTO $dto): Order
     {
         return $this->orderRepository->create([
@@ -37,10 +40,18 @@ class OrderService
         ]);
     }
 
+    /*
+     * Поменять статус заказа
+     * @see App\Http\Enums\OrderStatus
+     */
     public function setStatus(int $orderId, OrderStatus $status)
     {
         return $this->orderRepository->update($orderId, ['status' => $status]);
     }
+
+    /*
+     * Задать исполнителя для заказа
+     */
     public function assignWorker(AssignWorkerDTO $dto, int $orderId): array
     {
         $rejected = $this->workersExOrderTypeRepository->rejected($dto->workerId, $dto->orderTypeId);

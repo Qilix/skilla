@@ -17,6 +17,9 @@ class OrderController extends Controller
         $this->service = $service;
     }
 
+    /*
+     * Создать заказ
+     */
     public function store(CreateOrderRequest $request)
     {
         $dto = CreateOrderDTO::fromRequest($request);
@@ -30,6 +33,9 @@ class OrderController extends Controller
         return response()->json(['data' => $order]);
     }
 
+    /*
+     * Задать исполнителя для заказа
+     */
     public function assignWorker(AssignWorkerRequest $request, int $orderId)
     {
         $dto = AssignWorkerDTO::fromRequest($request);
